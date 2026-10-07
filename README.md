@@ -1,5 +1,7 @@
 # CUDA Case Study - Smart Energy Grids (GPU-Accelerated Power-Flow Simulation Lab)
 
+![CUDA Power Flow Dashboard](assets/dashboard.png)
+
 ---
 
 ## Executive Summary

@@ -1,0 +1,32 @@
+Reference solver (SciPy SuperLU) on results/synthetic10000.case: 10000 buses, 15413 branches, Ybus nnz = 40770
+  iteration 0: max mismatch = 2.715e+00 pu
+  iteration 1: max mismatch = 5.695e-01 pu
+  iteration 2: max mismatch = 5.468e-01 pu
+  iteration 3: max mismatch = 4.001e-03 pu
+  iteration 4: max mismatch = 3.685e-07 pu
+  iteration 5: max mismatch = 8.391e-14 pu
+  converged in 5 Newton iterations, 0.360 s
+  CUDA solution vs reference: max |dVm| = 5.00e-10 pu, max |dVa| = 5.36e-09 deg
+  power-balance mismatch of the CUDA solution (recomputed here): 7.66e-11 pu
+  RESULT: PASS
+Reference solver (SciPy SuperLU) on results/synthetic100000.case: 100000 buses, 154573 branches, Ybus nnz = 408506
+  iteration 0: max mismatch = 3.175e+00 pu
+    (damped step: 0.25 x Newton step)
+  iteration 1: max mismatch = 2.376e+00 pu
+  iteration 2: max mismatch = 1.272e+00 pu
+    (damped step: 0.125 x Newton step)
+  iteration 3: max mismatch = 1.207e+00 pu
+    (damped step: 0.25 x Newton step)
+  iteration 4: max mismatch = 1.180e+00 pu
+    (damped step: 0.25 x Newton step)
+  iteration 5: max mismatch = 1.035e+00 pu
+    (damped step: 0.5 x Newton step)
+  iteration 6: max mismatch = 8.788e-01 pu
+  iteration 7: max mismatch = 4.437e-01 pu
+  iteration 8: max mismatch = 4.180e-03 pu
+  iteration 9: max mismatch = 3.967e-07 pu
+  iteration 10: max mismatch = 9.173e-14 pu
+  converged in 10 Newton iterations, 14.411 s
+  CUDA solution vs reference: max |dVm| = 5.00e-10 pu, max |dVa| = 3.42e-08 deg
+  power-balance mismatch of the CUDA solution (recomputed here): 8.58e-11 pu
+  RESULT: PASS

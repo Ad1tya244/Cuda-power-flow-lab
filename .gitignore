@@ -1,0 +1,80 @@
+# =============================================================================
+# .gitignore - CUDA Power Flow Simulation Lab
+# CCA Case Study: Aditya Divakar (1BY23CS010)
+# =============================================================================
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Node.js Dependencies and Logs
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm/
+
+# Python and Jupyter Notebooks
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+dist/
+build/
+
+# Python Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Compiled CUDA, C++, and Binary Artifacts
+pf_cuda
+*.o
+*.obj
+*.out
+*.exe
+*.dSYM/
+*.pdb
+*.ilk
+cloudflared
+
+# Environment and Secret Files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Temporary and Output Scratch Files
+*.tmp
+*.temp
+temp_*.case
+scratch/
+*.swp
+*.swo
+*~
+
+# IDE and Editor Directories
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.claude/
+.gemini/
+
+# Coverage and Test Output
+.nyc_output/
+coverage/

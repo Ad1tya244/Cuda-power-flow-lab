@@ -1,0 +1,37 @@
+
+================ DEMO: IEEE 14-bus test system on the GPU ================
+  grid: 14 buses (5 generator buses incl. slack, 9 load buses), 20 lines | Ybus 54 non-zeros (27.5510% of 14 x 14) | Jacobian 22 x 22, 146 non-zeros, 4 bus colours -> 8 triangular-solve levels
+
+GPU Newton-Raphson load flow (the 5 CUDA steps):
+  [Step 1] cudaMalloc: Ybus (54 non-zeros), Jacobian (146 non-zeros), 22-unknown vectors
+  [Step 2] cudaMemcpy H->D: Ybus, Jacobian pattern, specified powers, start voltages
+  [Step 3] Newton loop: k_voltage<<<1,256>>>, cusparseSpMV (Ybus*V), k_mismatch<<<1,256>>>,
+           k_jacobian<<<1,256>>> (one thread per non-zero), ILU(0) + BiCGSTAB (cuSPARSE/cuBLAS)
+           iteration 0: max mismatch = 9.219e-01 pu
+           iteration 1: max mismatch = 1.004e-01 pu
+           iteration 2: max mismatch = 1.102e-03 pu
+           iteration 3: max mismatch = 1.356e-07 pu
+           iteration 4: max mismatch = 1.400e-14 pu
+  [Step 4] cudaMemcpy D->H: 14 voltage magnitudes and angles
+  [Step 5] cudaFree: all device buffers and library handles released
+
+bus  type   | GPU  Vm (pu)  Va   | published Vm  Va   | CPU = GPU?
+-----------+--------------------+--------------------+-----------
+1    slack  |  1.0600     0.000  |  1.060      0.00   | yes
+2    gen    |  1.0450    -4.983  |  1.045     -4.98   | yes
+3    gen    |  1.0100   -12.725  |  1.010    -12.72   | yes
+4    load   |  1.0177   -10.313  |  1.019    -10.33   | yes
+5    load   |  1.0195    -8.774  |  1.020     -8.78   | yes
+6    gen    |  1.0700   -14.221  |  1.070    -14.22   | yes
+7    load   |  1.0615   -13.360  |  1.062    -13.37   | yes
+8    gen    |  1.0900   -13.360  |  1.090    -13.36   | yes
+9    load   |  1.0559   -14.939  |  1.056    -14.94   | yes
+10   load   |  1.0510   -15.097  |  1.051    -15.10   | yes
+11   load   |  1.0569   -14.791  |  1.057    -14.79   | yes
+12   load   |  1.0552   -15.076  |  1.055    -15.07   | yes
+13   load   |  1.0504   -15.156  |  1.050    -15.16   | yes
+14   load   |  1.0355   -16.034  |  1.036    -16.04   | yes
+
+Converged in 4 Newton iterations; power balance satisfied to 1.6e-14 pu at every bus.
+Largest difference from the published solution: 0.0013 pu, 0.017 deg (table rounded to 3/2 decimals)
+DEMO RESULT: PASS

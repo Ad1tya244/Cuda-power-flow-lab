@@ -1,0 +1,11 @@
+buses,variant,device,ordering,trisolve,levels,newton_its,bicg_its,solve_ms,total_ms,converged
+10000,GPU natural order + cuSPARSE SpSV,gpu,natural,cusparse-spsv,232,4,295,5845.433,5900.631,1
+10000,GPU multicolour + cuSPARSE SpSV,gpu,multicolour,cusparse-spsv,7,4,565,1328.020,1357.756,1
+10000,GPU multicolour + colour kernels,gpu,multicolour,colour-kernels,7,4,558,681.530,693.596,1
+10000,GPU multicolour, no preconditioner,gpu,multicolour,none,7,4,1125,931.045,936.267,1
+10000,CPU 1 thread, natural order,cpu1,natural,sequential,232,4,295,627.074,643.992,1
+10000,CPU 1 thread, multicolour,cpu1,multicolour,sequential,7,4,521,869.780,886.262,1
+50000,GPU multicolour + cuSPARSE SpSV,gpu,multicolour,cusparse-spsv,8,5,1625,6650.666,6795.310,1
+50000,GPU multicolour + colour kernels,gpu,multicolour,colour-kernels,8,4,1184,3736.583,3772.903,1
+50000,CPU 1 thread, natural order,cpu1,natural,sequential,520,5,877,9821.114,9929.443,1
+50000,CPU 1 thread, multicolour,cpu1,multicolour,sequential,8,5,1698,16778.187,16899.329,1

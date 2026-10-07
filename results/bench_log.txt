@@ -1,0 +1,37 @@
+
+================ BENCHMARKS ================
+GPU     : NVIDIA GeForce MX250, compute capability 6.1, 3 SMs, 1582 MHz, 2048 MiB, L2 512 KiB, memory bus 64-bit
+CUDA    : runtime 11.7, driver 11.7, cuSPARSE 11704
+CPU     : 8 hardware threads (OpenMP)
+
+[E1] Full Newton-Raphson load flow vs grid size (CPU: 1 and 8 threads)
+   buses     J nnz unknowns |    NR   BiCG |     GPU ms    CPU1 ms    CPUN ms |   vs 1T   vs NT
+    1000     11085     1665 |     4    160 |      149.8       17.9      412.7 |    0.1x    2.8x
+    5000     55630     8332 |     4    388 |      363.2      174.0      878.2 |    0.5x    2.4x
+   10000    112163    16665 |     4    558 |      650.7      605.7     1116.3 |    0.9x    1.7x
+   20000    224448    33332 |     5   1078 |     1762.6     2615.5     3138.9 |    1.5x    1.8x
+   50000    562202    83332 |     4   1184 |     3665.6    10244.8    20242.3 |    2.8x    5.5x
+  100000   1123965   166665 |     5   2126 |    11797.9    24333.1    45277.4 |    2.1x    3.8x
+  200000   2246954   333332 |     5   2529 |    28765.5   100930.2    67395.4 |    3.5x    2.3x
+
+[E2] Time per phase at 200000 buses (ms, summed over all Newton steps): see e2_phases.csv
+
+[E3] I = Ybus * V : dense (cuBLAS Zgemv) vs sparse (cuSPARSE SpMV), average of 50 runs
+   1000 buses: dense    0.692 ms (   15.3 MB) | sparse  0.1909 ms ( 0.08 MB) |      4x faster, 0.404% of entries non-zero
+   2000 buses: dense    2.480 ms (   61.0 MB) | sparse  0.0949 ms ( 0.16 MB) |     26x faster, 0.203% of entries non-zero
+   4000 buses: dense    6.021 ms (  244.1 MB) | sparse  0.0657 ms ( 0.32 MB) |     92x faster, 0.101% of entries non-zero
+   6000 buses: dense   13.476 ms (  549.3 MB) | sparse  0.0718 ms ( 0.49 MB) |    188x faster, 0.068% of entries non-zero
+
+[E5] Linear-solver design variants (whole Newton-Raphson solve)
+   10000 buses | GPU natural order + cuSPARSE SpSV    | levels  232 | Newton  4 | BiCGSTAB   295 | solve    5845.4 ms | total    5900.6 ms 
+   10000 buses | GPU multicolour + cuSPARSE SpSV      | levels    7 | Newton  4 | BiCGSTAB   565 | solve    1328.0 ms | total    1357.8 ms 
+   10000 buses | GPU multicolour + colour kernels     | levels    7 | Newton  4 | BiCGSTAB   558 | solve     681.5 ms | total     693.6 ms 
+   10000 buses | GPU multicolour, no preconditioner   | levels    7 | Newton  4 | BiCGSTAB  1125 | solve     931.0 ms | total     936.3 ms 
+   10000 buses | CPU 1 thread, natural order          | levels  232 | Newton  4 | BiCGSTAB   295 | solve     627.1 ms | total     644.0 ms 
+   10000 buses | CPU 1 thread, multicolour            | levels    7 | Newton  4 | BiCGSTAB   521 | solve     869.8 ms | total     886.3 ms 
+   50000 buses | GPU multicolour + cuSPARSE SpSV      | levels    8 | Newton  5 | BiCGSTAB  1625 | solve    6650.7 ms | total    6795.3 ms 
+   50000 buses | GPU multicolour + colour kernels     | levels    8 | Newton  4 | BiCGSTAB  1184 | solve    3736.6 ms | total    3772.9 ms 
+   50000 buses | CPU 1 thread, natural order          | levels  520 | Newton  5 | BiCGSTAB   877 | solve    9821.1 ms | total    9929.4 ms 
+   50000 buses | CPU 1 thread, multicolour            | levels    8 | Newton  5 | BiCGSTAB  1698 | solve   16778.2 ms | total   16899.3 ms 
+
+BENCH COMPLETE - CSV files in results/

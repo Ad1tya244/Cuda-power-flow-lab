@@ -1,0 +1,16 @@
+
+================ VERIFY ================
+  IEEE 14-bus: GPU matches published solution                    : PASS  (max diff 0.0013 pu, 0.017 deg)
+  IEEE 14-bus: GPU equals CPU                                    : PASS  (max diff 4.4e-16 pu, 5.0e-16 rad)
+  IEEE 14-bus: power balance < 1e-8 pu at every bus              : PASS  (1.6e-14 pu)
+  1000-bus grid: GPU converged, power balance < 1e-8 pu          : PASS  (4 Newton its, mismatch 9.1e-14 pu)
+  1000-bus grid: CPU converged, power balance < 1e-8 pu          : PASS  (4 Newton its, mismatch 5.7e-14 pu)
+  1000-bus grid: GPU and CPU voltages agree                      : PASS  (max diff 8.9e-16 pu, 6.9e-14 rad)
+  10000-bus grid: GPU converged, power balance < 1e-8 pu         : PASS  (4 Newton its, mismatch 4.5e-12 pu)
+  10000-bus grid: CPU converged, power balance < 1e-8 pu         : PASS  (4 Newton its, mismatch 7.8e-10 pu)
+  10000-bus grid: GPU and CPU voltages agree                     : PASS  (max diff 1.5e-11 pu, 1.8e-10 rad)
+  100000-bus grid: GPU converged, power balance < 1e-8 pu        : PASS  (5 Newton its, mismatch 5.5e-12 pu)
+  100000-bus grid: CPU converged, power balance < 1e-8 pu        : PASS  (5 Newton its, mismatch 5.5e-10 pu)
+  100000-bus grid: GPU and CPU voltages agree                    : PASS  (max diff 1.1e-11 pu, 7.7e-10 rad)
+  wrote results/synthetic10000.case (+ _gpu.sol) and 100000 for tools/pf_reference.py --compare
+VERIFY RESULT: ALL TESTS PASSED

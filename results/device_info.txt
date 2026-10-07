@@ -1,0 +1,3 @@
+GPU     : NVIDIA GeForce MX250, compute capability 6.1, 3 SMs, 1582 MHz, 2048 MiB, L2 512 KiB, memory bus 64-bit
+CUDA    : runtime 11.7, driver 11.7, cuSPARSE 11704
+CPU     : 8 hardware threads (OpenMP)

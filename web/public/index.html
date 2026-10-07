@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GridLab - Cloud Simulation</title>
+  <meta name="description" content="GridLab - Cloud-accelerated interactive power flow simulation lab.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- COMPACT ICON-RAIL SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="sidebar-brand-mark" title="GridLab Cloud Simulation">
+          <span class="brand-monogram">GL</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="#overview" class="nav-item active" data-nav="overview" title="Grid Topology Overview">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span class="nav-label">Grid</span>
+          </a>
+
+          <a href="#settings" class="nav-item" id="navSettings" data-nav="settings" title="Cloud GPU Configuration">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span class="nav-label">GPU</span>
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT WORKSPACE -->
+    <main class="main-content">
+      
+      <!-- TOP CONSOLIDATED TOOLBAR -->
+      <header class="main-topbar">
+        <div class="topbar-title-wrap">
+          <h1 class="page-title" id="mainTitle">IEEE 14-Bus Test System</h1>
+          <span class="page-subtitle">Real-time power flow simulation</span>
+        </div>
+
+        <div class="topbar-actions-group">
+          <!-- Left side controls -->
+          <div class="topbar-controls-left">
+            <div class="scenario-select-box">
+              <span class="scenario-label">Scenario</span>
+              <select class="select-clean" id="scenarioSelector">
+                <option value="baseline">Baseline (Normal)</option>
+                <option value="peak_load">Peak Demand (+30% Load)</option>
+                <option value="trip_gen">Trip PV Generator (Bus 2)</option>
+                <option value="trip_critical_line">Critical Line Trip (L1-2)</option>
+                <option value="voltage_collapse">Voltage Collapse Stress</option>
+              </select>
+            </div>
+
+            <!-- Load Scaling Slider -->
+            <label class="load-slider-label" title="Scale all loads across the grid">
+              <span>Load ×<b id="lv">1.0</b></span>
+              <input id="ld" type="range" min="0.5" max="3.0" step="0.1" value="1.0" class="slider-clean" />
+            </label>
+
+            <!-- Primary Simulation Actions -->
+            <div class="btn-group-controls">
+              <button class="btn btn-dark" id="btnTopRun">
+                <svg class="play-icon" id="topRunIcon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                <span id="btnTopRunText">Run Simulation</span>
+              </button>
+
+              <button class="btn btn-secondary" id="btnStep" title="Execute next CUDA kernel step">
+                <span>Step ▶</span>
+              </button>
+
+              <button class="btn btn-secondary" id="btnReset" title="Reset grid to flat start">
+                <span>↺ Reset</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Cloud GPU Status Group aligned to the right -->
+          <div class="topbar-status-group">
+            <div class="status-pill green" id="statusCloudGpu">
+              <span class="status-dot green"></span>
+              <span id="connText">Cloud GPU Online</span>
+            </div>
+            <div class="status-pill text-pill" id="badgeGpuDevice">NVIDIA T4</div>
+            <div class="status-pill text-pill" id="badgeGpuVram">16 GB</div>
+            <button class="icon-btn-sm-border" id="btnGpuConfig" title="Cloud GPU Configuration">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- 2-COLUMN DASHBOARD GRID -->
+      <div class="dashboard-grid">
+        
+        <!-- Left: Grid Topology Card -->
+        <section class="card card-topology">
+          <div class="card-header-compact">
+            <div class="card-title-group">
+              <h3 class="card-title">Grid Topology</h3>
+              <span class="card-sub-badge">Bus voltages (p.u.) &amp; line power flow (MW)</span>
+            </div>
+            
+            <div class="topology-legend-row">
+              <div class="legend-item"><span class="legend-dot blue"></span> Slack</div>
+              <div class="legend-item"><span class="legend-dot green"></span> Generator</div>
+              <div class="legend-item"><span class="legend-dot orange"></span> Load</div>
+              <button class="icon-btn-sm" id="btnFitScreen" title="Reset / Fit View">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- COMPACT CUDA PIPELINE HORIZONTAL STRIP -->
+          <div class="cuda-pipeline-strip">
+            <div class="stages" id="stg"></div>
+            <div class="pipeline-status-row">
+              <div class="pipeline-info" id="info"></div>
+              <div class="warp-dots-wrap">
+                <div class="th" id="th"></div>
+                <span class="th-legend" id="tc"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="topology-canvas-wrapper" id="grid-canvas-container">
+            <canvas id="gridCanvas"></canvas>
+          </div>
+        </section>
+
+        <!-- Right: 3 Compact Stacked Cards -->
+        <div class="sidebar-cards-col">
+          
+          <!-- Card 1: Simulation Status -->
+          <section class="card card-sim-status">
+            <div class="card-header-compact">
+              <h3 class="card-title">Simulation Status</h3>
+              <span class="badge badge-converged" id="badgeConvergence">Converged</span>
+            </div>
+
+            <div class="status-metrics-row">
+              <div class="status-metric-box">
+                <div class="metric-label">Iterations</div>
+                <div class="metric-val" id="kpiIterations">3 / 20</div>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar-fill green" id="barIterations" style="width: 25%;"></div>
+                </div>
+              </div>
+
+              <div class="status-metric-box">
+                <div class="metric-label">Solve Time</div>
+                <div class="metric-val" id="kpiSolveTime">5 ms</div>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar-fill green" id="barTime" style="width: 15%;"></div>
+                </div>
+              </div>
+
+              <div class="status-metric-box">
+                <div class="metric-label">Max Mismatch</div>
+                <div class="metric-val" id="kpiMaxMismatch">3.4e-9 pu</div>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar-fill green" id="barMismatch" style="width: 10%;"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Card 2: System Summary -->
+          <section class="card card-system-summary">
+            <div class="card-header-compact">
+              <h3 class="card-title">System Summary</h3>
+            </div>
+
+            <div class="summary-2x2-grid">
+              <div class="summary-cell">
+                <div class="metric-label">Total Generation</div>
+                <div class="summary-val" id="valTotalGen">232.8 MW</div>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar-fill green" id="barGen" style="width: 80%;"></div>
+                </div>
+              </div>
+
+              <div class="summary-cell">
+                <div class="metric-label">Total Load</div>
+                <div class="summary-val" id="valTotalLoad">217.6 MW</div>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar-fill orange" id="barLoad" style="width: 75%;"></div>
+                </div>
+              </div>
+
+              <div class="summary-cell">
+                <div class="metric-label">System Losses</div>
+                <div class="summary-val" id="valSystemLosses">13.8 MW</div>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar-fill slate" id="barLoss" style="width: 20%;"></div>
+                </div>
+              </div>
+
+              <div class="summary-cell">
+                <div class="metric-label">Voltage Violations</div>
+                <div class="summary-val green-text" id="valViolations">0</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Card 3: Bus Voltages Bar Chart -->
+          <section class="card card-voltages">
+            <div class="card-header-compact">
+              <div class="card-title-group">
+                <h3 class="card-title">Bus Voltages (p.u.)</h3>
+                <span class="card-sub-badge" id="voltageStatsBadge">Min: 1.018 · Max: 1.090 pu</span>
+              </div>
+              <span class="badge badge-converged" id="badgeVoltagesState" style="font-size: 10.5px;">14/14 Nominal</span>
+            </div>
+
+            <div class="voltage-chart-container">
+              <div class="chart-y-axis">
+                <span>1.10</span>
+                <span>1.05</span>
+                <span>1.00</span>
+                <span>0.95</span>
+                <span>0.90</span>
+              </div>
+              <div class="voltage-bars-wrapper" id="voltageBarsWrapper">
+              </div>
+            </div>
+          </section>
+
+          <!-- Card 4: Live Jacobian Matrix Sparsity Pattern -->
+          <section class="card card-jacobian">
+            <div class="card-header-compact">
+              <div class="card-title-group">
+                <h3 class="card-title">Jacobian Matrix (J)</h3>
+                <span class="card-sub-badge" id="jacobianDimBadge">22 × 22</span>
+              </div>
+              <span class="badge badge-neutral" id="badgeJacobianPhase">146 NNZ · CSR</span>
+            </div>
+
+            <div class="jacobian-heatmap-wrap">
+              <canvas id="jacobianCanvas"></canvas>
+            </div>
+            <div class="jacobian-meta-row">
+              <span id="jacobianNnzLabel">146 non-zeros (30.2% fill)</span>
+              <span id="jacobianStageLabel">Stage 4: k_jacobian / Stage 5: csrilu02</span>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Hidden Case Selector for IEEE 14 vs IEEE 30 -->
+  <select id="caseSelector" style="display: none;">
+    <option value="ieee14" selected>IEEE 14-Bus System</option>
+    <option value="ieee30">IEEE 30-Bus System</option>
+  </select>
+  <!-- Hidden elements to preserve backward compatibility for visualizer instances -->
+  <div style="display: none;">
+    <button id="btnSolve"></button>
+    <button id="btnContingency"></button>
+    <span id="gridNameTitle">IEEE 14-Bus Test System</span>
+    <span id="gridStatsBadge">14 Buses | 20 Lines</span>
+    <span id="pingIndicator">-- ms</span>
+    <span id="kpiActiveLoss">13.8 MW</span>
+    <span id="kpiReactiveLoss">-- MVAr</span>
+    <span id="kpiViolations">0</span>
+    <tbody id="busTableBody"></tbody>
+    <canvas id="spyCanvas"></canvas>
+    <canvas id="convergenceCanvas"></canvas>
+    <canvas id="scalingCanvas"></canvas>
+    <canvas id="phaseChartCanvas"></canvas>
+    <div id="pipelineStages"></div>
+    <div id="gpuConsole"></div>
+    <div id="contingencyTableContainer"></div>
+  </div>
+
+  <!-- Settings / GPU Config Modal -->
+  <div class="modal-overlay" id="modalGpu">
+    <div class="modal-card">
+      <h3 class="modal-title">Cloud Compute & GPU Configuration</h3>
+      <div class="form-group">
+        <label class="form-label">Hardware Profile</label>
+        <select class="select-clean" style="width: 100%;" id="modalGpuSelect">
+          <option value="tesla_t4">NVIDIA Tesla T4 (Cloud Colab / AWS G4dn)</option>
+          <option value="a100_80gb">NVIDIA A100-SXM4-80GB (Cloud HPC)</option>
+          <option value="mx250">NVIDIA GeForce MX250 (Laptop Baseline)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Remote Cloud GPU Worker Endpoint URL</label>
+        <input class="form-input" id="modalEndpoint" type="text" placeholder="https://<colab-tunnel>.trycloudflare.com or http://localhost:8000" />
+      </div>
+      <div class="modal-footnote">
+        All power-flow iterations and matrix workloads run remotely on the cloud GPU server.
+      </div>
+      <div class="modal-btn-row">
+        <button class="btn btn-secondary" id="modalGpuClose">Cancel</button>
+        <button class="btn btn-dark" id="btnSaveGpuConfig">Save & Connect</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="js/grid_canvas.js"></script>
+  <script src="js/spy_plot.js"></script>
+  <script src="js/pipeline_visualizer.js"></script>
+  <script src="js/contingency_view.js"></script>
+  <script src="js/scaling_chart.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "cuda_powerflow_cca",
+  "version": "1.0.0",
+  "description": "CCA case study - Aditya Divakar (1BY23CS010)",
+  "main": "index.js",
+  "scripts": {
+    "start": "./run.sh",
+    "test": "node tools/test_simulation.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

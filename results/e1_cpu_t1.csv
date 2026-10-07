@@ -1,0 +1,2 @@
+buses,threads,cpu_ms,inject_ms,jacobian_ms,ilu_ms,solve_ms,bicg_its
+200000,1,80418.752,332.694,305.782,212.011,79493.462,1447

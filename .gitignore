@@ -78,3 +78,7 @@ scratch/
 # Coverage and Test Output
 .nyc_output/
 coverage/
+
+# Generated benchmark data
+results/*.case
+results/*.sol
